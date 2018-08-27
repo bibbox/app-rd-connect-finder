@@ -1,0 +1,4 @@
+{
+  runningcontainers:["§§INSTANCE-finder-liferay", "§§INSTANCE-finder-db"],
+  supportcontainers:["§§INSTANCE-app-data"]    
+}

@@ -1,0 +1,43 @@
+version: '2'
+
+networks:
+    bibbox-default-network:
+      external: true
+
+services:
+
+  §§INSTANCE-finder-liferay:
+    image: bibbox/app-image
+    container_name:  §§INSTANCE-finder-liferay
+    restart: unless-stopped
+    networks:
+      - bibbox-default-network
+    links:
+      - §§INSTANCE-lapp-db:app-db
+    ports:
+      - "§§PORT1:80"
+    depends_on:
+      - §§INSTANCE-app-db
+      - §§INSTANCE-app-data
+    volumes_from: 
+      - §§INSTANCE-app-data
+
+§§INSTANCE-finder-db:
+  image: bibbox/app-image2
+  container_name:  §§INSTANCE-finder-db
+  restart: unless-stopped
+  networks:
+    - bibbox-default-network
+  ports:
+    - "§§PORT2:8000"
+  depends_on:
+    - §§INSTANCE-app-data
+  volumes_from: 
+    - §§INSTANCE-app-data
+
+  §§INSTANCE-app-data:
+    image: busybox
+    container_name: §§INSTANCE-app-data
+    volumes:
+      - ./var/app-data:/var/app-data
+      - ./var/app-config:/var/app-config

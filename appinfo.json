@@ -1,0 +1,10 @@
+{
+		"name": "RD-Connect Finder",
+		"short_name": "RDC Finder",
+		"version": "V.1.0",
+		"description": "The RD-Connect Finder",
+        "short_description": "The RD-Connect Finder",
+		"catalogue_url": "",
+		"application_url": "https://github.com/bibbox/app-rd-connect-finder",
+		"tags": ["Catalogue", "RD-Connect"]
+}
