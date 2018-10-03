@@ -13,23 +13,26 @@ services:
     networks:
       - bibbox-default-network
     links:
-      - §§INSTANCE-lapp-db:app-db
+      - §§INSTANCE-lapp-db:finder-db
     ports:
-      - "§§PORT1:80"
+      - "§§PORT1:8080"
     depends_on:
-      - §§INSTANCE-app-db
+      - §§INSTANCE-finder-liferay
       - §§INSTANCE-app-data
     volumes_from: 
       - §§INSTANCE-app-data
 
 §§INSTANCE-finder-db:
-  image: bibbox/app-image2
+  image: postgres:9.5
   container_name:  §§INSTANCE-finder-db
   restart: unless-stopped
+  environment:
+      - POSTGRES_PASSWORD=8$AGb3iüe!j-gLr+U]6nDZA9actXuL
+      - POSTGRES_USER=liferay
+      - PGDATA=/var/lib/postgresql/data/pgdata
+      - POSTGRES_DB=lportal
   networks:
     - bibbox-default-network
-  ports:
-    - "§§PORT2:8000"
   depends_on:
     - §§INSTANCE-app-data
   volumes_from: 
@@ -38,6 +41,11 @@ services:
   §§INSTANCE-app-data:
     image: busybox
     container_name: §§INSTANCE-app-data
+    networks:
+      - bibbox-default-network
     volumes:
-      - ./var/app-data:/var/app-data
-      - ./var/app-config:/var/app-config
+      - ./data/postgresql/data/pgdata:/var/lib/postgresql/data/pgdata
+      - ./data/opt/liferay:/opt/liferay
+      - ./data/init.d/liferay:/etc/init.d/liferay
+      - ./data/init.d/functions:/etc/init.d/functions
+      - ./data/db_backup_20180817.sql:/docker-entrypoint-initdb.d/db_backup_20180817.sql

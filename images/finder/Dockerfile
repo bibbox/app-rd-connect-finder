@@ -1,66 +1,21 @@
-# Some Dpocker installation
-# Here you see a limesurves Docker as an example
+# RD-Connect Finder (Liferay)
 # VERSION 1.0
 #
 
-FROM php:7.0-apache
-MAINTAINER Lukas Pessl
+FROM FROM debian:jessie
 
-ENV LIMESURVEY_VERSION=2.63.0
-ENV VERSION_CODE=170304
+RUN mkdir -p /opt/install  \
+	&& wget -P /opt/install/ http://downloads.bibbox.org/rd-connect-liferay.tar.gz
 
-RUN echo 'deb http://packages.dotdeb.org jessie all' > /etc/apt/sources.list.d/dotdeb.list && \
-    curl http://www.dotdeb.org/dotdeb.gpg | apt-key add -
+ADD init.d/functions /etc/init.d/functions
+ADD init.d/liferay /etc/init.d/liferay
+ADD portal-setup-wizard.properties /opt/install/portal-setup-wizard.properties
 
-RUN apt-get update && \
-    apt-get -q -y install \
-        libldap2-dev \
-        libpng12-dev \
-        imagemagick \
-        libmcrypt-dev \
-        libzip-dev \
-        curl \
-        php7.0-gd \
-        php7.0-json \
-        php7.0-ldap \
-        php7.0-imap \
-        php7.0-mbstring \
-        php7.0-mysql \
-        php7.0-xml \
-        php7.0-xsl \
-        php7.0-zip \
-        php7.0-soap \
-        mysql-client \
-        libmysqlclient-dev \
-        libc-client-dev \
-        libkrb5-dev \
-        sendmail \
-        && rm -r /var/lib/apt/lists/*
+WORKDIR /opt/install
+RUN tar -xzf rd-connect-liferay.tar.gz
 
-RUN docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu/
-RUN docker-php-ext-configure imap --with-kerberos --with-imap-ssl
+ADD scripts /opt/scripts
+WORKDIR /opt/scripts
+RUN chmod a+x *.sh
 
-RUN docker-php-ext-install \
-    gd \
-    mysqli \
-    pdo_mysql \
-    ldap \
-    zip \
-    imap
-
-RUN a2enmod php7 && a2enmod rewrite
-
-RUN curl -L https://github.com/LimeSurvey/LimeSurvey/archive/$LIMESURVEY_VERSION+$VERSION_CODE.tar.gz > LimeSurvey-$LIMESURVEY_VERSION-$VERSION_CODE.tar.gz
-
-RUN tar xvzf LimeSurvey-$LIMESURVEY_VERSION-$VERSION_CODE.tar.gz --directory /var/www
-
-RUN mv /var/www/LimeSurvey-$LIMESURVEY_VERSION-$VERSION_CODE/* /var/www/html
-
-RUN chown -R www-data:www-data /var/www/html/
-
-RUN chmod -R 755 /var/www/html/tmp
-RUN chmod -R 755 /var/www/html/upload
-RUN chmod -R 775 /var/www/html/application/config
-
-	
-
+ENTRYPOINT ["/opt/scripts/entrypoint.sh"]
