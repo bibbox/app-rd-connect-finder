@@ -7,7 +7,8 @@ networks:
 services:
 
   §§INSTANCE-finder-liferay:
-    image: bibbox/app-image
+    build:
+       context: ./images/finder
     container_name:  §§INSTANCE-finder-liferay
     restart: unless-stopped
     networks:
